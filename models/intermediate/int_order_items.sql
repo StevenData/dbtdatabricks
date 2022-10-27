@@ -37,20 +37,16 @@ final as (
         -- so we back out the extended price per item
         (line_items.extended_price/nullif(line_items.quantity, 0)) as base_price,
         line_items.discount_percentage,
-        (base_price * (1 - line_items.discount_percentage)) as discounted_price,
+        ((line_items.extended_price/nullif(line_items.quantity, 0)) * (1 - line_items.discount_percentage)) as discounted_price,
 
         line_items.extended_price as gross_item_sales_amount,
         (line_items.extended_price * (1 - line_items.discount_percentage)) as discounted_item_sales_amount,
         -- We model discounts as negative amounts
-        (-1 * line_items.extended_price * line_items.discount_percentage)as item_discount_amount,
+        (-1 * line_items.extended_price * line_items.discount_percentage) as item_discount_amount,
         line_items.tax_rate,
-        ((gross_item_sales_amount + item_discount_amount) * line_items.tax_rate) as item_tax_amount,
-        (
-            gross_item_sales_amount + 
-            item_discount_amount + 
-            item_tax_amount
-        ) as net_item_sales_amount
-
+        ((line_items.extended_price * (1-line_items.discount_percentage)) * line_items.tax_rate) as item_tax_amount,
+        (line_items.extended_price * (1-line_items.discount_percentage) * ( + line_items.tax_rate)) as net_item_sales_amount
+ 
     from
         orders
     inner join line_items
