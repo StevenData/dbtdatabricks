@@ -3,6 +3,7 @@
 
 select
     order_key,
-    net_item_sales_amount
+    sum(net_item_sales_amount) as net_item_sales_sum
 from {{ ref('fct_orders') }}
-having not(net_item_sales_amount>= 0)
+group by order_key
+having not(net_item_sales_sum>= 0)
