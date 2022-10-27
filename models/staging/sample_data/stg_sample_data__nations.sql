@@ -10,7 +10,8 @@ transformed as (
 
   select 
     n_nationkey as nation_key,
-    n_regionkey as region_key
+    n_regionkey as region_key,
+    n_name as nation
     -- add nation name here
 
 
